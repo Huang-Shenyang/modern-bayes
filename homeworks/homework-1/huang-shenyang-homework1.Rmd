@@ -100,6 +100,7 @@ j. Give the command you would use to fix the data frame.
 # missing data are coded as -999
 # change them to NA so that they will not affect the mean or sum
 rain.df[rain.df==-999] <- NA
+# ignore NA entries in the dataframe with na.rm=T
 rain.df$daily_correct <- rowSums(rain.df[, as.character(c(0:23))], 
                          na.rm=T)
 
@@ -125,7 +126,10 @@ sort(x)
 sum(x)
 ```
 
-- The `sum(x)` command will throw an error as characters cannot be added together. The previous two commans will still work as R can sort and find the maximum of character arrays, however, it seems that variable `x` should have been a numeric array `c(5,12,7)` for the intended operations.
+- The first `c()` command combines the three variable of character type into one vector `"5" "12" "7"` and assigns it to variable `x`. 
+- The second `max()` command finds the maximum of the three elements, which would be `"7"` because the comparison is done on the first character of each element in the vector. 
+- The third `sort()` command sorts the elements in the vector in ascending order of the first character of each element and returns `"12" "5"  "7"` 
+- The `sum(x)` command will throw an error as characters cannot be added together.It seems that variable `x` should have been a numeric array `c(5,12,7)` for the intended operations.
 
 
 b. For the next two commands, either explain their results, or why they
@@ -152,7 +156,7 @@ z[1,2] + z[1,3]
 
 a.) What is the point of reproducible code? 
 
-- Reproducible code is easier for others (or my future self) to understand, trace back any potential source of errors, and reuse for similar practices in the future.
+- Reproducible code is easier for others (and my future self) to understand, trace back any potential source of errors, and reuse for similar practices in the future.
 
 
 b.) Given an example of why making your code reproducible is important for you to know in this class and moving forward. 
