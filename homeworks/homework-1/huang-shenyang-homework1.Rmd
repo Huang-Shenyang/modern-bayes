@@ -1,0 +1,166 @@
+---
+title: "Data Wrangling in \\texttt{R}"
+author: 'STA 360/602: Homework 1'
+date: "Due Friday January 7 at 5 PM EDT"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+Today's agenda: Manipulating data objects; using the built-in functions, doing numerical calculations, and basic plots; reinforcing core probabilistic ideas.
+
+***General instructions for homeworks***: Please follow the uploading file instructions according to the syllabus. You will give the commands to answer each question in its own code block, which will also produce plots that will be automatically embedded in the output file. Each answer must be supported by written statements as well as any code used. Your code must be completely reproducible and must compile. 
+
+***Advice***: Start early on the homeworks and it is advised that you not wait until the day of. While the professor and the TA's check emails, they will be answered in the order they are received and last minute help will not be given unless we happen to be free.  
+
+***Commenting code***
+Code should be commented. See the Google style guide for questions regarding commenting or how to write 
+code \url{https://google.github.io/styleguide/Rguide.xml}. No late homework's will be accepted.
+
+***R Markdown Test***
+
+0. Open a new R Markdown file; set the output to HTML mode and "Knit". This should produce a web page with the knitting procedure executing your code blocks. You can edit this new file to produce your homework submission.
+
+***Working with data***
+
+Total points on assignment: 10 (reproducibility) + 22 (Q1) + 9 (Q2) + 3 (Q3) = 44 points 
+
+Reproducibility component: 10 points. 
+
+1.  (22 points total, equally weighted) The data set **rnf6080.dat** records hourly rainfall at a certain location in Canada, every day from 1960 to 1980.
+
+a. Load the data set into R and make it a data frame called \texttt{rain.df}.  What command did you use?
+```{r}
+# rain.df <- read.table("data/rnf6080.dat", header=F)
+rain.df <- read.table("https://raw.githubusercontent.com/resteorts/modern-bayes/master/homeworks/homework-1/data/rnf6080.dat", header=F)
+
+# look at the first few rows of rain.df
+head(rain.df)
+
+```
+
+b. How many rows and columns does \texttt{rain.df} have?  How do you know?  (If there are not 5070 rows and 27 columns, you did something wrong in the first part of the problem.)
+```{r}
+cat('number of rows =', nrow(rain.df), '\n')
+cat('number of columns =', ncol(rain.df), '\n')
+
+```
+
+c. What command would you use to get the names of the columns of \texttt{rain.df}? What are those names?
+```{r}
+# use the function colnames() to get the names of the columns, which are as printed below
+colnames(rain.df)
+
+```
+
+d. What command would you use to get the value at row 2, column 4? What is the value?
+```{r}
+# using square brackets to index the dataframe to get the value at row 2 and column 4
+rain.df[2,4]
+```
+
+e. What command would you use to display the whole second row?  What is the content of that row?
+```{r}
+# like before, but leave the column index blank to access values from the whole row
+rain.df[2,]
+```
+
+
+f.  What does the following command do?
+```{r}
+names(rain.df) <- c("year","month","day",seq(0,23))
+```
+- This command will change the names of the variables (columns) in the dataframe; the first three columns will be 'year', 'month', and 'day', and the following 24 columns will be named as integers 0-23.
+
+
+g.  Create a new column called \texttt{daily}, which is the sum of the 24 hourly columns.
+```{r}
+# missing data are coded as -999
+# change them to NA so that they will not affect the mean or sum
+rain.df$daily <- rowSums(rain.df[, as.character(c(0:23))], 
+                         na.rm=T)
+
+```
+
+
+h. Give the command you would use to create a histogram of the daily rainfall amounts.  Please make sure to attach your figures in your .pdf report. 
+```{r}
+hist(rain.df$daily)
+```
+
+
+
+i. Explain why that histogram above cannot possibly be right.
+
+- Rainfall amount cannot possibly be negative.
+
+j. Give the command you would use to fix the data frame.
+```{r}
+# missing data are coded as -999
+# change them to NA so that they will not affect the mean or sum
+rain.df[rain.df==-999] <- NA
+rain.df$daily_correct <- rowSums(rain.df[, as.character(c(0:23))], 
+                         na.rm=T)
+
+```
+
+k. Create a corrected histogram and again include it as part of your submitted report. Explain why it is more reasonable than the previous histogram.
+```{r}
+hist(rain.df$daily_correct)
+```
+
+- This is more reasonable as 1) it does not contain negative values and 2) it has a long right tail showing that most daily rainfall amounts are close to zero. 
+
+
+***Data types***
+
+2. (9 points, equally weighted) Make sure your answers to different parts of this problem are compatible with each other.
+
+a. For each of the following commands, either explain why they should be errors, or explain the non-erroneous result.
+```
+x <- c("5","12","7")
+max(x)
+sort(x)
+sum(x)
+```
+
+- The `sum(x)` command will throw an error as characters cannot be added together. The previous two commans will still work as R can sort and find the maximum of character arrays, however, it seems that variable `x` should have been a numeric array `c(5,12,7)` for the intended operations.
+
+
+b. For the next two commands, either explain their results, or why they
+should produce errors.
+```
+y <- c("5",7,12)
+y[2] + y[3]
+```
+- The first command using the `c()` function combines arguments to form a vector, while coercing them all the be characters. Hence the result is equivalent to that of `y <- c("5", "7", "12")`.
+- The second command will throw an error because characters cannot be added.
+
+
+c. For the next two commands, either explain their results, or why they should
+produce errors.
+```
+z <- data.frame(z1="5",z2=7,z3=12)
+z[1,2] + z[1,3]
+```
+- The first command will create a data frame with 1 row and 3 columns (named z1, z2, and z3), and the entries are specified and their data types preserved.
+- The second command will add the entries in row 1 column 2 and row 1 column 3, which is `7+12=19`.
+
+
+3. (3 pts, equally weighted). 
+
+a.) What is the point of reproducible code? 
+
+- Reproducible code is easier for others (or my future self) to understand, trace back any potential source of errors, and reuse for similar practices in the future.
+
+
+b.) Given an example of why making your code reproducible is important for you to know in this class and moving forward. 
+
+- In this class, reproducibility is part of the homework grade.
+
+
+c.) On a scale of 1 (easy) -- 10 (hard), how hard was this assignment. If this assignment was hard ($>5$), please state in one sentence what you struggled with. 
+
+- 2
+
