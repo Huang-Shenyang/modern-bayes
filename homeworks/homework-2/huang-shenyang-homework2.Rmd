@@ -239,14 +239,63 @@ legend("topright",
   &= \left(\prod_{i=1}^{n}{\frac{2}{\Gamma(a)} \theta^{2a} y_i^{2a - 1} e^{-\theta^2 y^2}}\right) {\frac{2}{\Gamma(c)} d^{2c} \theta^{2c - 1} e^{-d^2 \theta^2}} \\
   &= \left(\prod_{i=1}^{n}{y_i^{2a-1}}\right) \frac{2^n}{(\Gamma(a))^n} \theta^{2an}e^{-\theta^2\sum{y_i^2}} \frac{2}{\Gamma(c)} d^{2c} \theta^{2c - 1} e^{-d^2 \theta^2} \\
   &\propto \theta^{2an}e^{-\theta^2\sum{y_i^2}} \theta^{2c - 1} e^{-d^2 \theta^2} \\
-  &\propto \theta^{2(c+an)-1} e^{-\theta^2(d+\sum{y_i^2})} \\
-  &\propto \text{Galenshore}(c+an, \sqrt{d^2+\sum{y_i^2}}) \\
+  &\propto \theta^{2(c+an)-1} e^{-\theta^2(d^2+\sum{y_i^2})} \\
+  \text{Therefore, } &\theta|y_{1:n} \sim \text{Galenshore}(c+an, \sqrt{d^2+\sum{y_i^2}}).
   \end{align*}
+  - Given that $a,c,d,n,y>0$, this posterior distribution is propor because $c+an>0$ and $\sqrt{d^2+\sum{y_i^2}}>0$.
 
   
   
   (c) (10) Show that $$\frac{p(\theta_a | y_{1:n})}{p(\theta_b | y_{1:n})} = \bigg( \frac{\theta_a}{\theta_b} \bigg)^{2(an + c) - 1}
 e^{(\theta_b^2 - \theta_a^2)(d^2 + \sum y_i^2)},$$ where $$\theta_a, \theta_b \sim \text{Galenshore}(c,d).$$ Identify a sufficient statistic. 
+  \begin{align*}
+  \frac{p(\theta_a|y_{1:n})}{p(\theta_b|y_{1:n})} &= 
+  \frac{p(y_{1:n}|\theta_a)p(\theta_a)}{p(y_{1:n}|\theta_b)p(\theta_b)} \\
+  &= \frac{\left(\prod{y_i^{2a-1}}\right) \frac{2^n}{(\Gamma(a))^n} \theta_a^{2an}e^{-\theta_a^2\sum{y_i^2}} \frac{2}{\Gamma(c)} d^{2c} \theta_a^{2c - 1} e^{-d^2 \theta_a^2}} {\left(\prod{y_i^{2a-1}}\right) \frac{2^n}{(\Gamma(a))^n} \theta_b^{2an}e^{-\theta_b^2\sum{y_i^2}} \frac{2}{\Gamma(c)} d^{2c} \theta_b^{2c - 1} e^{-d^2 \theta_b^2}} \\
+  &= \frac{\theta_a^{2an}e^{-\theta_a^2\sum{y_i^2}}\theta_a^{2c - 1} e^{-d^2 \theta_a^2}} {\theta_b^{2an}e^{-\theta_b^2\sum{y_i^2}}\theta_b^{2c - 1} e^{-d^2 \theta_b^2}} \\
+  &= \frac{\theta_a^{2(an+c)-1}e^{-\theta_a^2(d^2+\sum{y_i^2})}} {\theta_b^{2(an+c)-1}e^{-\theta_b^2(d^2+\sum{y_i^2})}} \\
+  &= \bigg( \frac{\theta_a}{\theta_b} \bigg)^{2(an + c) - 1}
+e^{(\theta_b^2 - \theta_a^2)(d^2 + \sum y_i^2)} \\
+\text{Therefore, } & \sum y_i^2 \text{is sufficient.}
+  \end{align*}
+
+
   (d) (5) Determine $E[\theta | y_{1:n}]$.
+
+  - It is given that $E[Y] = \frac{\Gamma(a+1/2)}{\theta \Gamma(a)}$ for $Y \sim \text{Galenshore}(a,\theta)$.
+  - Since $p(\theta|y_{1:n}) \sim \text{Galenshore}(c+an, \sqrt{d^2+\sum{y_i^2}})$,
+   $$E[\theta | y_{1:n}] = \frac{\Gamma(c+an+1/2)}{\sqrt{d^2+\sum{y_i^2}} \Gamma(c+an)}.$$
+
+  
+  
+  
   (e) (10) Show that the form of the posterior predictive density $$p(y_{n+1} | y_{1:n}) =  \frac{2 y_{n+1}^{2a - 1} \Gamma(an + a + c)}{\Gamma(a)\Gamma(an + c)}
 \frac{(d^2 + \sum y_i^2)^{an + c}}{(d^2 + \sum y_i^2 + y_{n+1}^2)^{(an + a + c)}}.$$
+
+  \begin{align*}
+  p(y_{n+1}|y_{1:n}) =& \int{p(y_{n+1}|\theta)p(\theta|y_{1:n}) }d\theta \\
+  =& \int{ 
+  {\frac{2}{\Gamma(a)}\theta^{2a}y_{n+1}^{2a-1}e^{-\theta^2y_{n+1}^2}}
+  {\frac{2}{\Gamma(c+an)} (d^2+\sum{y_i^2})^{c+an} \theta^{2(c+an) - 1} e^{-(d^2+\sum{y_i^2)\theta^2}}}
+  }d\theta \\
+  =& \frac{4y_{n+1}^{2a-1}(d^2+\sum{y_i^2})^{c+an}}{\Gamma(a)\Gamma(c+an)}
+  \int{ 
+  {\theta^{2(an+a+c)-1}}
+  e^{-(d^2+\sum{y_i^2}+y_{n+1}^2)\theta^2}
+  }d\theta \\
+  =& \frac{4y_{n+1}^{2a-1}(d^2+\sum{y_i^2})^{c+an}}{\Gamma(a)\Gamma(c+an)}
+  \frac{\Gamma(an + a + c)}{2(d^2 + \sum y_i^2 + y_{n+1}^2)^{(an + a + c)}} \\
+  & \cdot\int{ \frac{2}{\Gamma(an+a+c)} (d^2 + \sum y_i^2 + y_{n+1}^2)^{(an+a+c)}
+  {\theta^{2(an+a+c)-1}}
+  e^{-(d^2+\sum{y_i^2}+y_{n+1}^2)\theta^2}
+  }d\theta \\
+  =& \frac{2 y_{n+1}^{2a-1} \Gamma(an+a+c)}{\Gamma(a)\Gamma(an+c)}
+  \frac{(d^2 + \sum y_i^2)^{an + c}}{(d^2 + \sum y_i^2 + y_{n+1}^2)^{(an + a + c)}} \\
+  &\cdot\int{\text{Galenshore}(\theta|an+a+c, \sqrt{d^2 + \sum y_i^2 + y_{n+1}^2})}d\theta \\
+  =& \frac{2 y_{n+1}^{2a-1} \Gamma(an+a+c)}{\Gamma(a)\Gamma(an+c)}
+  \frac{(d^2 + \sum y_i^2)^{an + c}}{(d^2 + \sum y_i^2 + y_{n+1}^2)^{(an + a + c)}}. \\
+  \end{align*}
+
+
+
+
