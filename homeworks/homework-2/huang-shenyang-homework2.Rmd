@@ -2,9 +2,11 @@
 title: 'Homework 2'
 author: "STA-360-602"
 date: "Due at 5:00 PM EDT on Friday, 14 January"
-output: pdf_document
-indent: true
+output: 
+  pdf_document:
+      extra_dependencies: ["bbm"]
 documentclass: article
+
 ---
 
 Total pts: 10 (reproducibility) + 30 (Q1) + 20 (Q2) + 40 (Q3) = 100\
@@ -112,14 +114,27 @@ plot_distributions('Informative priors 3, 1',
 
 2. (20  points total) *The Exponential-Gamma Model*
 We write $X\sim Exp(\theta)$ to indicate that $X$ has the Exponential distribution, that is, its p.d.f. is
-$$ p(x|\theta) = Exp(x|\theta) = \theta\exp(-\theta x)\mathbb{1}(x>0). $$
+$$ p(x|\theta) = Exp(x|\theta) = \theta\exp(-\theta x)\mathbbm{1}(x>0). $$
 The Exponential distribution has some special properties that make it a good model for certain applications. It has been used to model the time between events (such as neuron spikes, website hits, neutrinos captured in a detector), extreme values such as maximum daily rainfall over a period of one year, or the amount of time until a product fails (lightbulbs are a standard example).
 
 Suppose you have data $x_1,\dotsc,x_n$ which you are modeling as i.i.d. observations from an Exponential distribution, and suppose that your prior is $\theta\sim Gamma(a,b)$, that is,
-$$ p(\theta) = Gamma(\theta|a,b) = \frac{b^a}{\Gamma(a)}\theta^{a-1}\exp(-b\theta) \mathbb{1}(\theta>0). $$
+$$ p(\theta) = Gamma(\theta|a,b) = \frac{b^a}{\Gamma(a)}\theta^{a-1}\exp(-b\theta) \mathbbm{1}(\theta>0). $$
 
   (a) (5) Derive the formula for the posterior density, $p(\theta|x_{1:n})$. Give the form of the posterior in terms of one of the most common distributions (Bernoulli, Beta, Exponential, or Gamma).
-  (b) (5) Why is the posterior distribution a *proper* density or probability distribution function? 
+  \begin{align*}
+  p(\theta|x_{1:n}) &= p(x_{1:n}|\theta) p(\theta) \\
+    &= \left(\prod_{i=1}^{n}{\text{Exp}(x_i|\theta)}\right) \text{Gamma}(\theta|a,b) \\
+    &= \left(\prod_{i=1}^{n}{\theta\exp(-\theta x_i)}\right) \frac{b^a}{\Gamma(a)}\theta^{a-1}\exp(-b\theta) \mathbbm{1}(x>0) \\
+    &= \theta^n\exp(-\theta \sum_{i=1}^n x_i) \frac{b^a}{\Gamma(a)}\theta^{a-1}\exp(-b\theta) \mathbbm{1}(x>0) \\
+    &= \frac{b^a}{\Gamma(a)} \theta^{a+n-1}\exp(-\theta(b+\sum_{i=1}^n x_i) ) \mathbbm{1}(x>0) \\
+    &\propto \theta^{a+n-1}\exp(-\theta(b+\sum_{i=1}^n x_i) ) \mathbbm{1}(x>0) \\
+    &\propto \text{Gamma}(a+n, b+\sum_{i=1}^n x_i) \\
+  \end{align*}
+  
+  
+  (b) (5) Why is the posterior distribution a *proper* density or probability distribution function?
+  - Because the posterior distribution is Gamma.
+  
   (c) (5) Now, suppose you are measuring the number of seconds between lightning strikes during a storm, your prior is $Gamma(0.1,1.0)$, and your data is
 $$(x_1,\dotsc,x_8) = (20.9, 69.7, 3.6, 21.8, 21.4, 0.4, 6.7, 10.0).$$
 Plot the prior and posterior p.d.f.s. (Be sure to make your plots on a scale that allows you to clearly see the important features.)
