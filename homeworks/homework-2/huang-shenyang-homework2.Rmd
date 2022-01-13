@@ -291,7 +291,8 @@ e^{(\theta_b^2 - \theta_a^2)(d^2 + \sum y_i^2)} \\
   }d\theta \\
   =& \frac{2 y_{n+1}^{2a-1} \Gamma(an+a+c)}{\Gamma(a)\Gamma(an+c)}
   \frac{(d^2 + \sum y_i^2)^{an + c}}{(d^2 + \sum y_i^2 + y_{n+1}^2)^{(an + a + c)}} \\
-  &\cdot\int{\text{Galenshore}(\theta|an+a+c, \sqrt{d^2 + \sum y_i^2 + y_{n+1}^2})}d\theta \\
+  &\cdot\int{p(\theta|an+a+c, \sqrt{d^2 + \sum y_i^2 + y_{n+1}^2})}d\theta \\
+  &\text{where } \theta\sim\text{Galenshore}(an+a+c, \sqrt{d^2 + \sum y_i^2 + y_{n+1}^2})\\
   =& \frac{2 y_{n+1}^{2a-1} \Gamma(an+a+c)}{\Gamma(a)\Gamma(an+c)}
   \frac{(d^2 + \sum y_i^2)^{an + c}}{(d^2 + \sum y_i^2 + y_{n+1}^2)^{(an + a + c)}}. \\
   \end{align*}
