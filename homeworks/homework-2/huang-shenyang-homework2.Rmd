@@ -191,7 +191,60 @@ for $y>0, \theta >0, a>0.$ Assume for now that $a$ is known and $\theta$ is unkn
 $$E[Y] = \frac{\Gamma(a +1/2)}{\theta \Gamma(a)}$$ and 
 $$E[Y^2] = \frac{a}{\theta^2}.$$
   (a) (10) Identify a class of conjugate prior densities for $\theta$. \textcolor{red}{Assume the prior parameters are $c$ and $d.$} That is, state the distribution that $\theta$ should have with parameters $c,d$ such that the resulting posterior is conjugate. Plot a few members of this class of densities.
+  
+  - $\theta \sim \text{Galenshore}(c,d)$
+  
+```{r 3a, echo=F, include=T}
+# plot Galenshore density with different parameters
+Galenshore_Likelihood <- function(theta, c, d) {
+  # comparing to the formula in the question:
+  # y is replaced by theta
+  # a is replaced by c
+  # theta is replaced by d
+  LH <- 2/gamma(c)*d^(2*c)*theta^(2*c-1)*exp(-d^2*theta^2)
+  return(LH)  
+}
+theta_seq <- seq(0,4, length=1000)
+
+# plot prior p.d.f.
+plot(theta_seq,
+     Galenshore_Likelihood(theta_seq, 1, .5),
+     main='Galenshore density functions',
+     type='l', lwd=3,
+     ylab='',
+     xlab='theta',
+     # yaxt='n'
+     ylim = c(0,2),
+     )
+# add lines
+lines(theta_seq, Galenshore_Likelihood(theta_seq, 1, 1),
+      col=2, lty=2, lwd=3)
+lines(theta_seq, Galenshore_Likelihood(theta_seq, 1, 2),
+      col=3, lty=3, lwd=3)
+lines(theta_seq, Galenshore_Likelihood(theta_seq, 2, 2),
+      col=4, lty=4, lwd=3)
+legend("topright", 
+       legend=c("c=0.5, d=1",
+                "c=1, d=1",
+                "c=2, d=1",
+                "c=2, d=2"),
+       lty=c(1,2,3,4), col=c(1,2,3,4))
+```
+  
+  
   (b) (5) Let $Y_1, \ldots, Y_n \stackrel{iid}{\sim}$ Galenshore($a, \theta$). Find the posterior distribution of $\theta | y_{1:n}$ using a prior from your conjugate class. 
+  \begin{align*}
+  p(\theta|y_{1:n}) &= p(y_{1:n}|\theta) p(\theta) \\
+  &= \left(\prod_{i=1}^{n}{\text{Galenshore}(y_i|a,\theta)}\right) \text{Galenshore}(\theta|c,d) \\
+  &= \left(\prod_{i=1}^{n}{\frac{2}{\Gamma(a)} \theta^{2a} y_i^{2a - 1} e^{-\theta^2 y^2}}\right) {\frac{2}{\Gamma(c)} d^{2c} \theta^{2c - 1} e^{-d^2 \theta^2}} \\
+  &= \left(\prod_{i=1}^{n}{y_i^{2a-1}}\right) \frac{2^n}{(\Gamma(a))^n} \theta^{2an}e^{-\theta^2\sum{y_i^2}} \frac{2}{\Gamma(c)} d^{2c} \theta^{2c - 1} e^{-d^2 \theta^2} \\
+  &\propto \theta^{2an}e^{-\theta^2\sum{y_i^2}} \theta^{2c - 1} e^{-d^2 \theta^2} \\
+  &\propto \theta^{2(c+an)-1} e^{-\theta^2(d+\sum{y_i^2})} \\
+  &\propto \text{Galenshore}(c+an, \sqrt{d^2+\sum{y_i^2}}) \\
+  \end{align*}
+
+  
+  
   (c) (10) Show that $$\frac{p(\theta_a | y_{1:n})}{p(\theta_b | y_{1:n})} = \bigg( \frac{\theta_a}{\theta_b} \bigg)^{2(an + c) - 1}
 e^{(\theta_b^2 - \theta_a^2)(d^2 + \sum y_i^2)},$$ where $$\theta_a, \theta_b \sim \text{Galenshore}(c,d).$$ Identify a sufficient statistic. 
   (d) (5) Determine $E[\theta | y_{1:n}]$.
