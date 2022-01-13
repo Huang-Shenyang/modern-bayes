@@ -133,12 +133,52 @@ $$ p(\theta) = Gamma(\theta|a,b) = \frac{b^a}{\Gamma(a)}\theta^{a-1}\exp(-b\thet
   
   
   (b) (5) Why is the posterior distribution a *proper* density or probability distribution function?
-  - Because the posterior distribution is Gamma.
+  - From the Gamma prior distribution, we should have parameters $a,b>0$.
+  - From the Exponential distribution, we have $n>0, \sum_{i=1}^n x_i>0$.
+  - Hence, we have $a+n>0, b+\sum_{i=1}^n x_i>0$; both parameters satisfy the requirement of the Gamma function, so the posterior distribution is *proper*.
+  
   
   (c) (5) Now, suppose you are measuring the number of seconds between lightning strikes during a storm, your prior is $Gamma(0.1,1.0)$, and your data is
 $$(x_1,\dotsc,x_8) = (20.9, 69.7, 3.6, 21.8, 21.4, 0.4, 6.7, 10.0).$$
 Plot the prior and posterior p.d.f.s. (Be sure to make your plots on a scale that allows you to clearly see the important features.)
+
+```{r 2c, echo=F, include=T}
+X <- c(20.9, 69.7, 3.6, 21.8, 21.4, 0.4, 6.7, 10.0)
+# prior parameters
+a <- 0.1
+b <- 1.0
+# posterior parameters
+an <- a + length(X)
+bn <- b + sum(X)
+
+theta_seq <- seq(0, 1, length=1000)
+
+# plot prior p.d.f.
+plot(theta_seq,
+     dgamma(theta_seq, shape=a, rate=b),
+     main='Probability density functions',
+     type='l', lwd=3,
+     ylab='',
+     xlab='theta',
+     # yaxt='n'
+     # ylim = c(0,40),
+     )
+# add posterior p.d.f.
+lines(theta_seq, dgamma(theta_seq, shape=an, rate=bn),
+      col=2, lty=2, lwd=3)
+legend("topright", legend=c("Prior", "Posterior"),
+       lty=c(1,2), col=c(1,2))
+
+
+```
+
+
+
   (d) (5) Give a specific example of an application where an Exponential model would be reasonable. Give an example where an Exponential model would NOT be appropriate, and explain why.
+  
+  - An Exponential model is reasonable when modeling time because the distribution is over $(0, +\infty)$; moreover, the Exponential distribution is *memoryless*, i.e., $P(X > t + s|X > t) = P(X > s)$, making it suitable for modelling the time between next randomly occurring events such as neural spikes when the time that has elapsed is irrelevant to when the next event will occur.  
+  - An Exponential model is NOT reasonable when modeling the fluctuation in the stock market (rises and falls), because the model can never achieve negative values. 
+  - Source used: "STA 360: Reference Sheet for Distributions"
 
 \newpage
 
