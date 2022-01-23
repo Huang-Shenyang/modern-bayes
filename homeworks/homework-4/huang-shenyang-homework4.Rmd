@@ -1,0 +1,98 @@
+---
+title: 'Homework 4'
+author: "STA-360-602"
+# date: "TBD"
+output: pdf_document
+indent: true
+documentclass: article
+---
+
+Total points: 10 (reproducibility) + 10 (Q1) + 25 (Q2) = 45 points.\
+
+1. (10 points, 5 points each) Hoff, 3.10 (Change of variables).
+  
+  (a) $\theta \sim \text{beta}(a,b), \psi=\log[\theta/(1-\theta)]$. Obtain the form of $p_\psi$ and plot it for the case that $a=b=1$.
+
+  \textcolor{blue}{Q1a Ans:}
+  \begin{align*}
+  \psi &= \log[\theta/(1-\theta)] \\
+  e^\psi &= \theta/(1-\theta) \\
+  (1-\theta)e^\psi &= \theta \\
+  e^\psi &= \theta + \theta e^\psi \\
+  \theta &= \frac{e^\psi}{1+e^\psi} = h(\psi) \\
+  \text{Note that, } 0 &< h(\psi) = \frac{e^\psi}{1+e^\psi} < 1. \\
+  \text{Then, } \ & \\
+  p_\psi(\psi) &= p_\theta(h(\psi)) \times \left|\dfrac{dh}{d\psi}\right| \\
+  &= \text{Beta}(h(\psi)|a,b) \times \left|\dfrac{d(\frac{e^\psi}{1+e^\psi})}{d\psi}\right|\\
+  &= \frac{1}{B(a,b)}h(\psi)^{a-1}(1-h(\psi))^{b-1}I(0<h(\psi)<1) \times \left| \frac{e^\psi}{1+e^\psi} - \frac{e^{2\psi}}{(1+e^\psi)^2} \right|  \\
+  &= \frac{1}{B(a,b)} \frac{e^{(a-1)\psi}}{(1+e^\psi)^{(a-1)}} \frac{1}{(1+e^\psi)^{(b-1)}} \left| \frac{(1+e^\psi)e^\psi - e^{2\psi}}{(1+e^\psi)^2} \right| \\
+  &= \frac{1}{B(a,b)} \frac{e^{(a-1)\psi}}{(1+e^\psi)^{(a+b-2)}} \left| \frac{e^{\psi}}{(1+e^\psi)^2} \right| \\
+  &= \frac{1}{B(a,b)} \frac{e^{a\psi}}{(1+e^\psi)^{(a+b)}} \\
+  \end{align*}
+  
+  
+```{r, echo=F, include=T}
+# plot for the case a=b=1
+a=1
+b=1
+psi <- seq(0,1,length=1000)
+p_psi <- (1/beta(a,b)) * exp(a*psi) / ((1+exp(psi))^(a+b))
+# make plot
+plot(psi, p_psi,
+     type='l', lwd=2, # line
+     # ylim = c(0,0.3),
+     main='Probability density of psi',
+     xlab='psi',
+     ylab='probability density')
+
+```
+  
+  
+  
+  
+  (b) $\theta \sim \text{gamma}(a,b), \psi=\log\theta$. Obtain the form of $p_\psi$ and plot it for the case that $a=b=1$.
+
+  \textcolor{blue}{Q1b Ans:}
+  \begin{align*}
+  \psi &= \log\theta \\
+  e^\psi &= \theta = h(\psi) \\
+  \text{Note that, } h(\psi) &= e^\psi > 0. \\
+  \text{Then, } \ & \\
+  p_\psi(\psi) &= p_\theta(h(\psi)) \times \left|\dfrac{dh}{d\psi}\right| \\
+  &= \text{Gamma}(h(\psi)|a,b) \times \left|\dfrac{d(e^\psi)}{d\psi}\right|\\
+  &= \frac{b^a}{\Gamma(a)}h(\psi)^{a-1}e^{-bh(\psi)}I(h(\psi)>0) \times \left| e^\psi \right| \\
+  &= \frac{b^a}{\Gamma(a)}e^{(a-1)\psi} e^{-b\exp(\psi)} e^\psi \\
+  &= \frac{b^a}{\Gamma(a)}e^{a\psi - b\exp(\psi)} \\
+  \end{align*}
+
+```{r, echo=F, include=T}
+# plot for the case a=b=1
+a=1
+b=1
+psi <- seq(0,1,length=1000)
+p_psi_2 <- (b^a/gamma(a)) * exp( a*psi - b*exp(psi) )
+# make plot
+plot(psi, p_psi_2,
+     type='l', lwd=2, # line
+     # ylim = c(0,0.3),
+     main='Probability density of psi',
+     xlab='psi',
+     ylab='probability density')
+
+```
+
+\newpage
+
+2. *Lab component* (25 points total) Please refer to lab 4 and complete tasks 4---5.
+(a) (10) Task 4
+\textcolor{blue}{Q2a Ans:}
+
+
+
+
+
+
+\newpage
+
+(b) (15) Task 5
+\textcolor{blue}{Q2b Ans:}
