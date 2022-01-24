@@ -35,7 +35,7 @@ Total points: 10 (reproducibility) + 10 (Q1) + 25 (Q2) = 45 points.\
 # plot for the case a=b=1
 a=1
 b=1
-psi <- seq(0,1,length=1000)
+psi <- seq(-5,5,length=10000)
 p_psi <- (1/beta(a,b)) * exp(a*psi) / ((1+exp(psi))^(a+b))
 # make plot
 plot(psi, p_psi,
@@ -69,7 +69,7 @@ plot(psi, p_psi,
 # plot for the case a=b=1
 a=1
 b=1
-psi <- seq(0,1,length=1000)
+psi <- seq(-5,5,length=10000)
 p_psi_2 <- (b^a/gamma(a)) * exp( a*psi - b*exp(psi) )
 # make plot
 plot(psi, p_psi_2,
@@ -84,15 +84,106 @@ plot(psi, p_psi_2,
 \newpage
 
 2. *Lab component* (25 points total) Please refer to lab 4 and complete tasks 4---5.
+
+```{r setup for lab tasks, include=T, warning=F, message=F}
+library(ggplot2)
+library(tidyverse)
+
+set.seed(2022) # for reproducibility
+
+# input data
+# spurters
+x <- c(18, 40, 15, 17, 20, 44, 38)
+# controls
+y <- c(-4, 0, -19, 24, 19, 10, 5, 10, 29, 13, -9, -8, 
+       20, -1, 12, 21, -7, 14, 13, 20, 11, 16, 15, 27, 
+       23, 36, -33, 34, 13, 11, -19, 21, 6, 25, 30, 22, 
+       -28, 15, 26, -1, -2, 43, 23, 22, 25, 16, 10, 29)
+
+# priors
+m <- 0
+c <- 1
+a <- 1/2
+b <- 10^2*a
+
+```
+
+
 (a) (10) Task 4
+
 \textcolor{blue}{Q2a Ans:}
 
+```{r Task 4, echo=T}
+# define function to compute posteriors
+computePosteriors <- function(data, m, c, a, b) {
+  n <- length(data)
+  M <- (c*m+sum(data)) / (c+n)
+  C <- c + n
+  A <- a + n/2
+  B <- b + (c*m^2 - C*M^2 + sum(data^2))/2
+  return(c(M, C, A, B))
+}
 
+# define function to draw samples from the NormalGamma distribution
+drawNormalGamma <- function(ndraws, params) {
+  m <- params[1]
+  c <- params[2]
+  a <- params[3]
+  b <- params[4]
+  # first drawing samples from the Gamma distribution
+  # and then use each pair of parameters (mean and sd) 
+  # to get samples from the Normal distribution 
+  
+  # Use a,b to get lambda (1/variance) which will be used in rnorm
+  lambda <- rgamma(ndraws, a, b)
+  mu <- rnorm(ndraws, m, sqrt(1/(c*lambda))) 
+  # Note that the rnorm function takes the standard deviation, not the variance
+  
+  # output: random samples of mu and lambda
+  return(data.frame(mu = mu, 
+                    lambda = lambda, 
+                    sd = 1/sqrt(lambda)))
+  # we defined lambda = 1/variance, so compute sd from lambda
+}
 
+# draw samples of mu from the posterior distributions 
+post_mu_S <- drawNormalGamma(10e6, computePosteriors(x, m, c, a, b))
+post_mu_C <- drawNormalGamma(10e6, computePosteriors(y, m, c, a, b))
 
+p <- sum(post_mu_S$mu > post_mu_C$mu) / nrow(post_mu_S)
+p
 
+```
+
+In 97% of all random samples of the posterior mean for the IQ score change in two groups, the spurters group has greater posterior mean of the IQ score change than that of the control group. 
 
 \newpage
 
+
 (b) (15) Task 5
+
 \textcolor{blue}{Q2b Ans:}
+
+```{r 5 check prior assumptions, echo=T, warning=F, message=F}
+# spurters
+y_prior <- drawNormalGamma(5*10e2, c(m,c,a,b))
+
+ggplot(y_prior) +
+  geom_point(aes(x=mu, y=sd), 
+             size=1, color='darkgreen', alpha=0.5) +
+  scale_x_continuous(limits=c(-50,50),
+                     name='mu, mean change in IQ score') + 
+  scale_y_continuous(limits=c(0,40),
+                     name='lambda^(1/2), std. dev. of change in IQ score') +
+  ggtitle(label='Samples of (mu, sigma) from the prior distribution') +
+  theme_light() + 
+  NULL
+
+```
+
+- Findings:
+- $\mu$ correctly centers around 0 as assumed in the prior. 
+- $\sigma$ (standard deviation) is higher when $\mu$ is further from 0, suggesting that using a fixed parameter for precision or variance (like the normal-normal model) may be inappropriate.
+
+
+
