@@ -48,6 +48,7 @@ plot(psi, p_psi,
 ```
   
   
+  \newpage
   
   
   (b) $\theta \sim \text{gamma}(a,b), \psi=\log\theta$. Obtain the form of $p_\psi$ and plot it for the case that $a=b=1$.
@@ -150,7 +151,7 @@ drawNormalGamma <- function(ndraws, params) {
 post_mu_S <- drawNormalGamma(10e6, computePosteriors(x, m, c, a, b))
 post_mu_C <- drawNormalGamma(10e6, computePosteriors(y, m, c, a, b))
 
-p <- sum(post_mu_S$mu > post_mu_C$mu) / nrow(post_mu_S)
+p <- mean(post_mu_S$mu > post_mu_C$mu)
 p
 
 ```
@@ -181,9 +182,8 @@ ggplot(y_prior) +
 
 ```
 
-- Findings:
-- $\mu$ correctly centers around 0 as assumed in the prior. 
-- $\sigma$ (standard deviation) is higher when $\mu$ is further from 0, suggesting that using a fixed parameter for precision or variance (like the normal-normal model) may be inappropriate.
+- $\mu$ correctly centers around 0 as assumed in the prior, but it is quite different from the posterior mean for either group since we set $c=1$ which has a low weight on the priors and make them uninformative. 
+- Precision $\lambda$ is also allowed to vary and it becomes lower (shown as larger standard deviation on the plot) as $\mu$ gets larger, which behaves in accordance with our choice of the NormalGamma distribution (that we are not sure how variable people's IQ score changes would be). 
 
 
 
