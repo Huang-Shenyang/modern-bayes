@@ -1,0 +1,75 @@
+---
+title: 'Homework 5'
+author: "STA-360-602"
+date: "TBD"
+output: pdf_document
+indent: true
+documentclass: article
+---
+
+Total points: 10 (reproducibility) + 15 (Q1) + 25 (Q2) = 50 points.\
+
+1. (15 points, 5 points each) Hoff, 3.12 (Jeffrey's prior).
+
+2. *Lab component* (25 points total) Please refer to lab 5 and complete tasks 4---5.
+
+```{r, echo=F, include=T}
+# grid of points
+set.seed(2022)
+x <- seq(0, 1, 10^-2)
+
+fx <- function(x) sin(pi * x)^2
+
+# function to simulate rejection sampling
+sim_fun <- function(f, envelope = "unif", par1 = 0, par2 = 1, n = 10^2, plot = TRUE, plot_f=FALSE){
+  
+  r_envelope <- match.fun(paste0("r", envelope))
+  d_envelope <- match.fun(paste0("d", envelope))
+  proposal <- r_envelope(n, par1, par2)
+  density_ratio <- f(proposal) / d_envelope(proposal, par1, par2)
+  samples <- proposal[runif(n) < density_ratio]
+  acceptance_ratio <- length(samples) / n
+  if (plot) {
+    hist(samples, probability = TRUE, 
+         main = paste0("Histogram of ", 
+                       n, " samples from ", 
+                       envelope, "(", par1, ",", par2,
+                       ").\n Acceptance ratio: ",
+                       round(acceptance_ratio,2)), 
+         cex.main = 0.75)
+    if (plot_f) {
+      x <- seq(0, 1, length=1000)
+      curve(fx(x), add=T)
+    }
+  }
+  list(x = samples, acceptance_ratio = acceptance_ratio)
+}
+```
+
+(a) (10) Task 4
+
+```{r task 4 histograms, echo=F, include=T}
+par(mfrow = c(2,2), mar = rep(4, 4))
+unif_1 <- sim_fun(fx, envelope = "unif", par1 = 0, par2 = 1, n = 10^2) 
+unif_2 <- sim_fun(fx, envelope = "unif", par1 = 0, par2 = 1, n = 10^5)
+beta_1 <- sim_fun(fx, envelope = "beta", par1 = 2, par2 = 2, n = 10^2) 
+beta_2 <- sim_fun(fx, envelope = "beta", par1 = 2, par2 = 2, n = 10^5)
+
+```
+
+- With only 100 samples, it appeared that the Beta(2,2) enveloping proposal worked better than Unif(0,1) with a slightly higher acceptance ratio of 0.55, in comparison to 0.46. However, Beta(2,2) generated an approximation that is skewed, unlike what was generated using Unif(0,1) and the actual f(x).
+- The above mentioned differences in acceptance ratios and skewness went away when the number of simulations was increased to 100,000 and both enveloping proposals generated essentially the same histogram which approximates f(x) with the same acceptance ratio of 0.5.
+
+
+(b) (15) Task 5
+
+(i) They were about the same when the number of simulations is sufficiently high (100,000), so neither is better.
+
+(ii) 
+
+```{r task 4 histograms, echo=F, include=T}
+par(mfrow = c(2,2), mar = rep(4, 4))
+unif_3 <- sim_fun(fx, envelope = "unif", par1 = 0, par2 = 1, n = 10^5, plot_f = T) 
+beta_3 <- sim_fun(fx, envelope = "beta", par1 = 2, par2 = 2, n = 10^5, plot_f = T)
+
+```
