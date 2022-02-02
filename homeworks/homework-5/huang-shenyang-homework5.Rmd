@@ -1,7 +1,7 @@
 ---
 title: 'Homework 5'
 author: "STA-360-602"
-date: "TBD"
+# date: "TBD"
 output: pdf_document
 indent: true
 documentclass: article
@@ -11,6 +11,68 @@ Total points: 10 (reproducibility) + 15 (Q1) + 25 (Q2) = 50 points.\
 
 1. (15 points, 5 points each) Hoff, 3.12 (Jeffrey's prior).
 
+  (a) $Y \sim \text{binomial}(n,\theta)$. Obtain Jeffreys' prior distribution $p_J(\theta)$ for this model.
+
+  \textcolor{blue}{Q1a Ans:}
+  \begin{align*}
+  I(\theta) &= -E_\theta[\partial^2 \log p(Y|\theta) / \partial \theta^2] \\
+  &= -E_\theta\left[\frac{\partial^2 \log (\binom{n}{Y}\theta^Y(1-\theta)^{n-Y})} {\partial \theta^2} \right] \\
+  &= -E_\theta\left[\frac{\partial^2 (\log\binom{n}{Y} + Y\log(\theta) + (n-Y)\log(1-\theta))} {\partial \theta^2} \right] \\
+  &= -E_\theta\left[\frac{\partial (\frac{Y}{\theta} - \frac{n-Y}{1-\theta})} {\partial \theta} \right] \\
+  &= -E_\theta\left[\frac{\partial (\frac{Y-Y\theta-n\theta+Y\theta}{\theta(1-\theta)})} {\partial \theta} \right] \\
+  &= -E_\theta\left[\frac{\partial (\frac{Y-n\theta}{\theta(1-\theta)})} {\partial \theta} \right] \\
+  &= -E_\theta[ (Y-n\theta)\theta^{-1}(-1)(-1)(1-\theta)^{-2} + (Y-n\theta)(-1)\theta^{-2}(1-\theta)^{-1} + (-n)\theta^{-1}(1-\theta)^{-1} ] \\
+  &= -E_\theta[ \frac{(Y-n\theta)\theta - (Y-n\theta)(1-\theta) - n\theta(1-\theta)} {\theta^{2}(1-\theta)^{2}}] \\ 
+  &= -E_\theta[ \frac{Y\theta-n\theta^2 - Y+Y\theta + n\theta - n\theta^2 - n\theta + n\theta^2)} {\theta^{2}(1-\theta)^{2}}] \\ 
+  &= -E_\theta[ \frac{Y\theta-n\theta^2 - Y+Y\theta + n\theta - n\theta^2 - n\theta + n\theta^2)} {\theta^{2}(1-\theta)^{2}}] \\ 
+  &= E_\theta[ \frac{n\theta^2 + Y - 2Y\theta} {\theta^{2}(1-\theta)^{2}}] \\ 
+  &= \frac{n\theta^2 + (n\theta) - 2(n\theta)\theta} {\theta^{2}(1-\theta)^{2}} \\ 
+  &= \frac{n\theta - n\theta^2} {\theta^{2}(1-\theta)^{2}} \\ 
+  &= \frac{n} {\theta(1-\theta)} \\ 
+  &\propto \frac{1}{\theta(1-\theta)} \\ 
+  \text{Hence, } & 
+ p_J(\theta) \propto \sqrt{I(\theta)} \propto \sqrt{ \frac{1}{\theta(1-\theta)}}
+  \end{align*}
+
+\newpage
+
+  (b) Reparameterize with $\psi = \log[\theta/(1-\theta)]$ so that $p(y|\psi)=\binom{n}{y}e^{\psi y}(1+e^\psi)^{-n}$. Obtain Jeffreys' prior distribution $p_J(\psi)$ for this model.
+
+  \textcolor{blue}{Q1b Ans:}
+  \begin{align*}
+  I(\psi) &= -E_\psi[\partial^2 \log p(y|\psi) / \partial \psi^2] \\
+  &= -E_\psi\left[\frac{\partial^2 \log (\binom{n}{y}e^{\psi y}(1+e^\psi)^{-n})} {\partial \psi^2} \right] \\
+  &= -E_\psi\left[\frac{\partial^2 (\log\binom{n}{y} + \psi y -n\log(1+e^\psi))} {\partial \psi^2} \right] \\
+  &= -E_\psi\left[\frac{\partial (y - n(1+e^\psi)^{-1}e^\psi)} {\partial \psi} \right] \\
+  &= -E_\psi\left[-n(-1)(1+e^\psi)^{-2}e^\psi e^\psi -n(1+e^\psi)^{-1}e^\psi) \right] \\
+  &= nE_\psi\left[ \frac{e^{\psi}}{(1+e^\psi)} - \frac{e^{2\psi}}{(1+e^\psi)^{2}} \right] \\
+  &= nE_\psi\left[ \frac{e^{\psi}}{(1+e^\psi)^{2}} \right] \\
+  &\propto \frac{e^{\psi}}{(1+e^\psi)^{2}} \\
+  \text{Hence, } & 
+ p_J(\psi) \propto \sqrt{I(\psi)} \propto \sqrt{ \frac{e^{\psi}}{(1+e^\psi)^{2}} }
+  \end{align*}
+
+\newpage
+
+  (c) Take the prior distribution from a) and apply the change of variables
+formula from Exercise 3.10 to obtain the induced prior density on $\psi$.
+This density should be the same as the one derived in part b) of this
+exercise. This consistency under reparameterization is the defining
+characteristic of Jeffrey’s’ prior.
+
+  \textcolor{blue}{Q1c Ans:}
+  \begin{align*}
+  \text{Since } \psi &= \log[\theta/(1-\theta)], \\
+  \theta &= \frac{e^\psi}{1+e^\psi} = h(\psi) \\
+  \text{Based on 3.10, } & \\ 
+  p_{J,\psi}(\psi) &= p_{J,\theta}(\theta) = p_{J,\theta}(h(\psi)) \times |\frac{dh}{d\psi}| \\
+  &\propto \sqrt{ \frac{1}{h(\psi)(1-h(\psi))}} \times |e^\psi(1+e^\psi)^{-1} + e^\psi(-1)(1+e^\psi)^{-2}e^\psi| \\
+  &= \sqrt{ \frac{1}{\frac{e^\psi}{1+e^\psi}(1-\frac{e^\psi}{1+e^\psi})}} \times |\frac{e^\psi+e^{2\psi}-e^{2\psi}}{(1+e^\psi)^2}| \\
+  &= \sqrt{ \frac{1}{\frac{e^\psi}{(1+e^\psi)^2}}} \times |\frac{e^\psi}{(1+e^\psi)^2}| \\
+  &= \sqrt{ \frac{e^\psi}{(1+e^\psi)^2}} \\
+  \end{align*}
+
+  
 2. *Lab component* (25 points total) Please refer to lab 5 and complete tasks 4---5.
 
 ```{r, echo=F, include=T}
@@ -22,7 +84,7 @@ fx <- function(x) sin(pi * x)^2
 
 # function to simulate rejection sampling
 sim_fun <- function(f, envelope = "unif", par1 = 0, par2 = 1, n = 10^2, plot = TRUE, plot_f=FALSE){
-  
+
   r_envelope <- match.fun(paste0("r", envelope))
   d_envelope <- match.fun(paste0("d", envelope))
   proposal <- r_envelope(n, par1, par2)
@@ -30,12 +92,12 @@ sim_fun <- function(f, envelope = "unif", par1 = 0, par2 = 1, n = 10^2, plot = T
   samples <- proposal[runif(n) < density_ratio]
   acceptance_ratio <- length(samples) / n
   if (plot) {
-    hist(samples, probability = TRUE, 
-         main = paste0("Histogram of ", 
-                       n, " samples from ", 
+    hist(samples, probability = TRUE,
+         main = paste0("Histogram of ",
+                       n, " samples from ",
                        envelope, "(", par1, ",", par2,
                        ").\n Acceptance ratio: ",
-                       round(acceptance_ratio,2)), 
+                       round(acceptance_ratio,2)),
          cex.main = 0.75)
     if (plot_f) {
       x <- seq(0, 1, length=1000)
@@ -50,9 +112,9 @@ sim_fun <- function(f, envelope = "unif", par1 = 0, par2 = 1, n = 10^2, plot = T
 
 ```{r task 4 histograms, echo=F, include=T}
 par(mfrow = c(2,2), mar = rep(4, 4))
-unif_1 <- sim_fun(fx, envelope = "unif", par1 = 0, par2 = 1, n = 10^2) 
+unif_1 <- sim_fun(fx, envelope = "unif", par1 = 0, par2 = 1, n = 10^2)
 unif_2 <- sim_fun(fx, envelope = "unif", par1 = 0, par2 = 1, n = 10^5)
-beta_1 <- sim_fun(fx, envelope = "beta", par1 = 2, par2 = 2, n = 10^2) 
+beta_1 <- sim_fun(fx, envelope = "beta", par1 = 2, par2 = 2, n = 10^2)
 beta_2 <- sim_fun(fx, envelope = "beta", par1 = 2, par2 = 2, n = 10^5)
 
 ```
@@ -65,11 +127,11 @@ beta_2 <- sim_fun(fx, envelope = "beta", par1 = 2, par2 = 2, n = 10^5)
 
 (i) They were about the same when the number of simulations is sufficiently high (100,000), so neither is better.
 
-(ii) 
+(ii)
 
-```{r task 4 histograms, echo=F, include=T}
-par(mfrow = c(2,2), mar = rep(4, 4))
-unif_3 <- sim_fun(fx, envelope = "unif", par1 = 0, par2 = 1, n = 10^5, plot_f = T) 
+```{r task 5 histograms, echo=F, include=T}
+par(mfrow = c(1,2))
+unif_3 <- sim_fun(fx, envelope = "unif", par1 = 0, par2 = 1, n = 10^5, plot_f = T)
 beta_3 <- sim_fun(fx, envelope = "beta", par1 = 2, par2 = 2, n = 10^5, plot_f = T)
 
 ```
