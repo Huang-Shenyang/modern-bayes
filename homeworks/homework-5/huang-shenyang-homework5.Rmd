@@ -11,127 +11,169 @@ Total points: 10 (reproducibility) + 15 (Q1) + 25 (Q2) = 50 points.\
 
 1. (15 points, 5 points each) Hoff, 3.12 (Jeffrey's prior).
 
-  (a) $Y \sim \text{binomial}(n,\theta)$. Obtain Jeffreys' prior distribution $p_J(\theta)$ for this model.
+(a) $Y \sim \text{binomial}(n,\theta)$. Obtain Jeffreys' prior distribution $p_J(\theta)$ for this model.
 
-  \textcolor{blue}{Q1a Ans:}
-  \begin{align*}
-  I(\theta) &= -E_\theta[\partial^2 \log p(Y|\theta) / \partial \theta^2] \\
-  &= -E_\theta\left[\frac{\partial^2 \log (\binom{n}{Y}\theta^Y(1-\theta)^{n-Y})} {\partial \theta^2} \right] \\
-  &= -E_\theta\left[\frac{\partial^2 (\log\binom{n}{Y} + Y\log(\theta) + (n-Y)\log(1-\theta))} {\partial \theta^2} \right] \\
-  &= -E_\theta\left[\frac{\partial (\frac{Y}{\theta} - \frac{n-Y}{1-\theta})} {\partial \theta} \right] \\
-  &= -E_\theta\left[\frac{\partial (\frac{Y-Y\theta-n\theta+Y\theta}{\theta(1-\theta)})} {\partial \theta} \right] \\
-  &= -E_\theta\left[\frac{\partial (\frac{Y-n\theta}{\theta(1-\theta)})} {\partial \theta} \right] \\
-  &= -E_\theta[ (Y-n\theta)\theta^{-1}(-1)(-1)(1-\theta)^{-2} + (Y-n\theta)(-1)\theta^{-2}(1-\theta)^{-1} + (-n)\theta^{-1}(1-\theta)^{-1} ] \\
-  &= -E_\theta[ \frac{(Y-n\theta)\theta - (Y-n\theta)(1-\theta) - n\theta(1-\theta)} {\theta^{2}(1-\theta)^{2}}] \\ 
-  &= -E_\theta[ \frac{Y\theta-n\theta^2 - Y+Y\theta + n\theta - n\theta^2 - n\theta + n\theta^2)} {\theta^{2}(1-\theta)^{2}}] \\ 
-  &= -E_\theta[ \frac{Y\theta-n\theta^2 - Y+Y\theta + n\theta - n\theta^2 - n\theta + n\theta^2)} {\theta^{2}(1-\theta)^{2}}] \\ 
-  &= E_\theta[ \frac{n\theta^2 + Y - 2Y\theta} {\theta^{2}(1-\theta)^{2}}] \\ 
-  &= \frac{n\theta^2 + (n\theta) - 2(n\theta)\theta} {\theta^{2}(1-\theta)^{2}} \\ 
-  &= \frac{n\theta - n\theta^2} {\theta^{2}(1-\theta)^{2}} \\ 
-  &= \frac{n} {\theta(1-\theta)} \\ 
-  &\propto \frac{1}{\theta(1-\theta)} \\ 
-  \text{Hence, } & 
- p_J(\theta) \propto \sqrt{I(\theta)} \propto \sqrt{ \frac{1}{\theta(1-\theta)}}
-  \end{align*}
-
-\newpage
-
-  (b) Reparameterize with $\psi = \log[\theta/(1-\theta)]$ so that $p(y|\psi)=\binom{n}{y}e^{\psi y}(1+e^\psi)^{-n}$. Obtain Jeffreys' prior distribution $p_J(\psi)$ for this model.
-
-  \textcolor{blue}{Q1b Ans:}
-  \begin{align*}
-  I(\psi) &= -E_\psi[\partial^2 \log p(y|\psi) / \partial \psi^2] \\
-  &= -E_\psi\left[\frac{\partial^2 \log (\binom{n}{y}e^{\psi y}(1+e^\psi)^{-n})} {\partial \psi^2} \right] \\
-  &= -E_\psi\left[\frac{\partial^2 (\log\binom{n}{y} + \psi y -n\log(1+e^\psi))} {\partial \psi^2} \right] \\
-  &= -E_\psi\left[\frac{\partial (y - n(1+e^\psi)^{-1}e^\psi)} {\partial \psi} \right] \\
-  &= -E_\psi\left[-n(-1)(1+e^\psi)^{-2}e^\psi e^\psi -n(1+e^\psi)^{-1}e^\psi) \right] \\
-  &= nE_\psi\left[ \frac{e^{\psi}}{(1+e^\psi)} - \frac{e^{2\psi}}{(1+e^\psi)^{2}} \right] \\
-  &= nE_\psi\left[ \frac{e^{\psi}}{(1+e^\psi)^{2}} \right] \\
-  &\propto \frac{e^{\psi}}{(1+e^\psi)^{2}} \\
-  \text{Hence, } & 
- p_J(\psi) \propto \sqrt{I(\psi)} \propto \sqrt{ \frac{e^{\psi}}{(1+e^\psi)^{2}} }
-  \end{align*}
+\textcolor{blue}{Q1a Ans:}
+\begin{align*}
+I(\theta) &= -E[\partial^2 \log p(Y|\theta) / \partial \theta^2 \mid \theta] \\
+&= -E\left[\frac{\partial^2 \log (\binom{n}{Y}\theta^Y(1-\theta)^{n-Y})} {\partial \theta^2}  \mid \theta\right] \\
+&= -E\left[\frac{\partial^2 (\log\binom{n}{Y} + Y\log(\theta) + (n-Y)\log(1-\theta))} {\partial \theta^2}  \mid \theta\right] \\
+&= -E\left[\frac{\partial (\frac{Y}{\theta} - \frac{n-Y}{1-\theta})} {\partial \theta}  \mid \theta\right] \\
+&= -E\left[\frac{\partial (\frac{Y-Y\theta-n\theta+Y\theta}{\theta(1-\theta)})} {\partial \theta}  \mid \theta\right] \\
+&= -E\left[\frac{\partial (\frac{Y-n\theta}{\theta(1-\theta)})} {\partial \theta}  \mid \theta\right] \\
+&= -E[ (Y-n\theta)\theta^{-1}(-1)(-1)(1-\theta)^{-2} + (Y-n\theta)(-1)\theta^{-2}(1-\theta)^{-1} + (-n)\theta^{-1}(1-\theta)^{-1}  \mid \theta] \\
+&= -E[ \frac{(Y-n\theta)\theta - (Y-n\theta)(1-\theta) - n\theta(1-\theta)} {\theta^{2}(1-\theta)^{2}} \mid \theta] \\ 
+&= -E[ \frac{Y\theta-n\theta^2 - Y+Y\theta + n\theta - n\theta^2 - n\theta + n\theta^2)} {\theta^{2}(1-\theta)^{2}} \mid \theta] \\ 
+&= -E[ \frac{Y\theta-n\theta^2 - Y+Y\theta + n\theta - n\theta^2 - n\theta + n\theta^2)} {\theta^{2}(1-\theta)^{2}} \mid \theta] \\ 
+&= E[ \frac{n\theta^2 + Y - 2Y\theta} {\theta^{2}(1-\theta)^{2}} \mid \theta] \\ 
+&= \frac{n\theta^2 + (n\theta) - 2(n\theta)\theta} {\theta^{2}(1-\theta)^{2}} \\ 
+&= \frac{n\theta - n\theta^2} {\theta^{2}(1-\theta)^{2}} \\ 
+&= \frac{n} {\theta(1-\theta)} \\ 
+&\propto \frac{1}{\theta(1-\theta)} \\ 
+\text{Hence, } & 
+p_J(\theta) \propto \sqrt{I(\theta)} \propto \sqrt{ \frac{1}{\theta(1-\theta)}}
+\end{align*}
 
 \newpage
 
-  (c) Take the prior distribution from a) and apply the change of variables
+(b) Reparameterize with $\psi = \log[\theta/(1-\theta)]$ so that $p(y|\psi)=\binom{n}{y}e^{\psi y}(1+e^\psi)^{-n}$. Obtain Jeffreys' prior distribution $p_J(\psi)$ for this model.
+
+\textcolor{blue}{Q1b Ans:}
+\begin{align*}
+I(\psi) &= -E[\partial^2 \log p(y|\psi) / \partial \psi^2 \mid\psi] \\
+&= -E\left[\frac{\partial^2 \log (\binom{n}{y}e^{\psi y}(1+e^\psi)^{-n})} {\partial \psi^2} \mid\psi\right] \\
+&= -E\left[\frac{\partial^2 (\log\binom{n}{y} + \psi y -n\log(1+e^\psi))} {\partial \psi^2} \mid\psi\right] \\
+&= -E\left[\frac{\partial (y - n(1+e^\psi)^{-1}e^\psi)} {\partial \psi}  \mid\psi\right] \\
+&= -E\left[-n(-1)(1+e^\psi)^{-2}e^\psi e^\psi -n(1+e^\psi)^{-1}e^\psi)  \mid\psi\right] \\
+&= nE\left[ \frac{e^{\psi}}{(1+e^\psi)} - \frac{e^{2\psi}}{(1+e^\psi)^{2}}  \mid\psi\right] \\
+&= nE\left[ \frac{e^{\psi}}{(1+e^\psi)^{2}} \mid\psi\right] \\
+&\propto \frac{e^{\psi}}{(1+e^\psi)^{2}} \\
+\text{Hence, } & 
+p_J(\psi) \propto \sqrt{I(\psi)} \propto \sqrt{ \frac{e^{\psi}}{(1+e^\psi)^{2}} }
+\end{align*}
+
+\newpage
+
+(c) Take the prior distribution from a) and apply the change of variables
 formula from Exercise 3.10 to obtain the induced prior density on $\psi$.
 This density should be the same as the one derived in part b) of this
 exercise. This consistency under reparameterization is the defining
 characteristic of Jeffrey’s’ prior.
 
-  \textcolor{blue}{Q1c Ans:}
-  \begin{align*}
-  \text{Since } \psi &= \log[\theta/(1-\theta)], \\
-  \theta &= \frac{e^\psi}{1+e^\psi} = h(\psi) \\
-  \text{Based on 3.10, } & \\ 
-  p_{J,\psi}(\psi) &= p_{J,\theta}(\theta) = p_{J,\theta}(h(\psi)) \times |\frac{dh}{d\psi}| \\
-  &\propto \sqrt{ \frac{1}{h(\psi)(1-h(\psi))}} \times |e^\psi(1+e^\psi)^{-1} + e^\psi(-1)(1+e^\psi)^{-2}e^\psi| \\
-  &= \sqrt{ \frac{1}{\frac{e^\psi}{1+e^\psi}(1-\frac{e^\psi}{1+e^\psi})}} \times |\frac{e^\psi+e^{2\psi}-e^{2\psi}}{(1+e^\psi)^2}| \\
-  &= \sqrt{ \frac{1}{\frac{e^\psi}{(1+e^\psi)^2}}} \times |\frac{e^\psi}{(1+e^\psi)^2}| \\
-  &= \sqrt{ \frac{e^\psi}{(1+e^\psi)^2}} \\
-  \end{align*}
+\textcolor{blue}{Q1c Ans:}
+\begin{align*}
+\text{Since } \psi &= \log[\theta/(1-\theta)], \\
+\theta &= \frac{e^\psi}{1+e^\psi} = h(\psi) \\
+\text{Based on 3.10, } & \\ 
+p_{J,\psi}(\psi) &= p_{J,\theta}(\theta) = p_{J,\theta}(h(\psi)) \times |\frac{dh}{d\psi}| \\
+&\propto \sqrt{ \frac{1}{h(\psi)(1-h(\psi))}} \times |e^\psi(1+e^\psi)^{-1} + e^\psi(-1)(1+e^\psi)^{-2}e^\psi| \\
+&= \sqrt{ \frac{1}{\frac{e^\psi}{1+e^\psi}(1-\frac{e^\psi}{1+e^\psi})}} \times |\frac{e^\psi+e^{2\psi}-e^{2\psi}}{(1+e^\psi)^2}| \\
+&= \sqrt{ \frac{1}{\frac{e^\psi}{(1+e^\psi)^2}}} \times |\frac{e^\psi}{(1+e^\psi)^2}| \\
+&= \sqrt{ \frac{e^\psi}{(1+e^\psi)^2}} \\
+\end{align*}
 
-  
+
+\newpage
+
+
 2. *Lab component* (25 points total) Please refer to lab 5 and complete tasks 4---5.
 
 ```{r, echo=F, include=T}
-# grid of points
-set.seed(2022)
-x <- seq(0, 1, 10^-2)
-
-fx <- function(x) sin(pi * x)^2
-
 # function to simulate rejection sampling
-sim_fun <- function(f, envelope = "unif", par1 = 0, par2 = 1, n = 10^2, plot = TRUE, plot_f=FALSE){
-
+sim_fun <- function(envelope = "unif", par1 = 0, par2 = 1, n = 10^2, c=1){
+  
+  f <- function(x) sin(pi * x)^2
+  
   r_envelope <- match.fun(paste0("r", envelope))
   d_envelope <- match.fun(paste0("d", envelope))
-  proposal <- r_envelope(n, par1, par2)
-  density_ratio <- f(proposal) / d_envelope(proposal, par1, par2)
-  samples <- proposal[runif(n) < density_ratio]
-  acceptance_ratio <- length(samples) / n
-  if (plot) {
-    hist(samples, probability = TRUE,
-         main = paste0("Histogram of ",
-                       n, " samples from ",
-                       envelope, "(", par1, ",", par2,
-                       ").\n Acceptance ratio: ",
-                       round(acceptance_ratio,2)),
-         cex.main = 0.75)
-    if (plot_f) {
-      x <- seq(0, 1, length=1000)
-      curve(fx(x), add=T)
-    }
-  }
-  list(x = samples, acceptance_ratio = acceptance_ratio)
+  # sample X from the proposal distribution
+  X <- r_envelope(n, par1, par2)
+  # sample Y from uniform(0, c*g(X))
+  Y <- runif(n, 0, c*d_envelope(X, par1, par2))
+  
+  accept <- (Y <= f(X))
+  acceptance_ratio <- mean(accept)
+  samples <- X[accept]
+  
+  # make histogram and fx curve
+  hist(samples, probability = TRUE, xlim=c(0,1),
+       main = paste0("Histogram of ",
+                     n, " samples from ", c, "*",
+                     envelope, "(", par1, ",", par2,
+                     ").\n Acceptance ratio: ",
+                     round(acceptance_ratio,2)),
+       cex.main = 0.75)
+  x <- seq(0, 1, length=1000)
+  curve(f(x), add=T)
+  
+  return(list(Z = samples, acceptance_ratio = acceptance_ratio))
 }
 ```
+
+
+\newpage
 
 (a) (10) Task 4
 
 ```{r task 4 histograms, echo=F, include=T}
+# grid of points
+set.seed(2022)
+
 par(mfrow = c(2,2), mar = rep(4, 4))
-unif_1 <- sim_fun(fx, envelope = "unif", par1 = 0, par2 = 1, n = 10^2)
-unif_2 <- sim_fun(fx, envelope = "unif", par1 = 0, par2 = 1, n = 10^5)
-beta_1 <- sim_fun(fx, envelope = "beta", par1 = 2, par2 = 2, n = 10^2)
-beta_2 <- sim_fun(fx, envelope = "beta", par1 = 2, par2 = 2, n = 10^5)
+unif_1 <- sim_fun(envelope = "unif", par1 = 0, par2 = 1, n = 10^2)
+unif_2 <- sim_fun(envelope = "unif", par1 = 0, par2 = 1, n = 10^5)
+beta_1 <- sim_fun(envelope = "beta", par1 = 2, par2 = 2, n = 10^2)
+beta_2 <- sim_fun(envelope = "beta", par1 = 2, par2 = 2, n = 10^5)
 
 ```
 
-- With only 100 samples, it appeared that the Beta(2,2) enveloping proposal worked better than Unif(0,1) with a slightly higher acceptance ratio of 0.55, in comparison to 0.46. However, Beta(2,2) generated an approximation that is skewed, unlike what was generated using Unif(0,1) and the actual f(x).
-- The above mentioned differences in acceptance ratios and skewness went away when the number of simulations was increased to 100,000 and both enveloping proposals generated essentially the same histogram which approximates f(x) with the same acceptance ratio of 0.5.
+- With only 100 samples, it appeared that the Beta(2,2) enveloping proposal worked slightly better than Unif(0,1) with a slightly higher acceptance ratio of 0.55, in comparison to 0.46. However, Beta(2,2) generated an approximation that is skewed, unlike what was generated using Unif(0,1) and the actual $f(x)$.
+- The above mentioned differences in acceptance ratios and skewness went away when the number of simulations was increased to 100,000 and both enveloping proposals generated essentially the same histogram which approximates $f(x)$ with the same acceptance ratio of 0.5.
+- In all cases, the histograms are higher than $f(x)$ because $f(x)$ is not a normalized density while the histograms approximates the normalized density.
 
+\newpage
 
 (b) (15) Task 5
 
-(i) They were about the same when the number of simulations is sufficiently high (100,000), so neither is better.
+  - (i) They were about the same in terms of acceptance ratio when the number of simulations is sufficiently high (10^5), so neither is better in that aspect. In terms of speed, however, it may be more efficient to use the uniform density function rather than the beta density function since computing the probability density is easier with a uniform distribution.
 
-(ii)
+  - (ii)
+    - To get higher acceptance ratio, I tried two new proposal distributions
+    - The first one is $0.7*$Beta(2,2) and the second one is $0.6*$Norm(0.5, 0.2) (truncated to focus on $0<=x<=1$). 
+    - These choices were made such that the the density functions are closer to $f(x)$, i.e., the area under the enveloping propoals and above f(x) is decreased.
+    - Both new enveloping proposals are shown on the first figure, as well as the old ones.
+    - The acceptance ratios of the new proposals are 0.72 and 0.84, indeed higher than the previous values of 0.5. 
 
-```{r task 5 histograms, echo=F, include=T}
+```{r task 5 pick a better enveloping proposal, echo=F, include=T}
+x <- seq(0,1,length=1000)
+f <- function(x) {sin(pi*x)^2}
+
+# plot different proposals
+plot(x, f(x), type='l', lwd=3, col='black', ylab = '', ylim=c(0, 1.6))
+curve(dunif, add=T, type='l', col='blue', lty=2, lwd=3,
+     ylab = '', ylim=c(0, 1.6))
+curve(dbeta(x, 2,2), add=T, type='l', col='green', lty=3, lwd=3, 
+     ylab = '', ylim=c(0, 1.6))
+curve(dbeta(x, 2,2)*0.7, add=T, type='l', col='salmon', lty=4, lwd=3, 
+     ylab = '', ylim=c(0, 1.6))
+curve(dnorm(x, 0.5, 0.2)*0.6, add=T, type='l', col='steelblue', lty=5, lwd=3,
+     ylab = '', ylim=c(0, 1.6))
+legend("bottom", 
+       lty = c(1,2,3,4,5), 
+       col = c("black", "blue", "green", "salmon", "steelblue"),
+       legend = c(expression(sin(pi*x)^2), "Unif", "Beta(2,2)", 
+                  "0.7*Beta(2,2)", "0.6*Norm(0.5,0.2)"))
+
 par(mfrow = c(1,2))
-unif_3 <- sim_fun(fx, envelope = "unif", par1 = 0, par2 = 1, n = 10^5, plot_f = T)
-beta_3 <- sim_fun(fx, envelope = "beta", par1 = 2, par2 = 2, n = 10^5, plot_f = T)
+
+# examine the rejection sampling results with new proposals
+new1 <- sim_fun(envelope = "beta", par1 = 2, par2 = 2, n = 10^5, c=0.7)
+new2 <- sim_fun(envelope = "norm", par1 = 0.5, par2 = 0.2, n = 10^5, c=0.6)
 
 ```
+
+
+
+
+
+

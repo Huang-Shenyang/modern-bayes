@@ -28,7 +28,6 @@ f <- function(x) {sin(pi*x)^2}
 fx <- f(x)
 
 # plot fx and unif on the same plot
-# turn off y axis labels as we're only interested in proportionality
 plot(x, fx, type='l', lwd=3, col='red', ylab = '', ylim=c(0, 1.6))
 # par(new = T)
 curve(dunif, add=T, type='l', col='blue', lty=2, lwd=3,
