@@ -130,6 +130,7 @@ Code adapted from the homework template.
 1. (5 points) Write code to produce trace plots and running average plots for the censored values for 200 iterations. Do these diagnostic plots suggest that you have run the sampler long enough? Explain.
 
 ```{r, include=T, echo=F}
+set.seed(123)
 n.iter <- 200
 init.theta <- 1
 init.missing <- rgamma(length(c), shape = r, rate = init.theta)
@@ -176,7 +177,7 @@ for (ind in missing.index){
 
 ```
 
-Running average plots for 200 iterations are shown above, and they show that 200 iterations is not long enough as the running averages still do not seem to have converged.
+Running average plots for 200 iterations are shown above, and they show that 200 iterations is not long enough as the running averages of some samplers ($z_8, z_{12}$) still do not seem to have converged.
 
 \newpage
 
@@ -184,6 +185,7 @@ Running average plots for 200 iterations are shown above, and they show that 200
 2. (5 points) Now run the chain for 10,000 iterations  and update your diagnostic plots (traceplots and running average plots). Report your findings for both traceplots and the running average plots for $\theta$ and the censored values. Do these diagnostic plots suggest that you have run the sampler long enough? Explain. 
 
 ```{r, include=T, echo=F}
+set.seed(123)
 n.iter <- 10000
 init.theta <- 1
 init.missing <- rgamma(length(c), shape = r, rate = init.theta)
@@ -230,7 +232,7 @@ for (ind in missing.index){
 
 ```
 
-Running average plots for 10000 iterations are shown above, and they suggest that the samplers still have not converged (see the unstable tail of $z_12$).
+Running average plots for 10000 iterations are shown above, and they do not suggest that the samplers have failed to converge as the right tails are quite stable. 
 
 
 \newpage
