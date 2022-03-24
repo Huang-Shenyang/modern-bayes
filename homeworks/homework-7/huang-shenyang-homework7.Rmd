@@ -1,7 +1,7 @@
 ---
-title: 'Homework 7 (Lab 9)'
+title: 'Homework 7'
 author: "STA-360-602"
-date: "5 PM EDT Friday, October 29"
+# date: "5 PM EDT Friday, October 29"
 output: pdf_document
 indent: true
 documentclass: article
@@ -21,5 +21,139 @@ Please look over the homework before lab this week. TA's will answer questions o
 problems below. I recommend that you work through them as much as possible before lab this week.
 
 1. (Multivariate Normal, 30 points, 10 points each) Hoff exercise 7.3 (Australian crab data).
+
+```{r load data from github repo, include=T, echo=F}
+library(MASS)
+
+bluecrab <- read.table('https://raw.githubusercontent.com/resteorts/modern-bayes/master/homeworks/homework-7/data/bluecrab.dat')
+
+orangecrab <- read.table('https://raw.githubusercontent.com/resteorts/modern-bayes/master/homeworks/homework-7/data/orangecrab.dat')
+```
+
+
+(a) - Code not displayed in pdf
+
+```{r posterior samples of theta and Sigma, include=T, echo=F}
+gibbs <- function(crab, iterations) {
+  p <- ncol(crab) # measurements
+  n <- nrow(crab) # observations
+  ybar <- colMeans(crab)
+  
+  # Prior parameters, as directed in the questions
+  mu_0 <- colMeans(crab) # sample mean
+  lambda_0 <- S_0 <- cov(crab) # sample covariance matrix
+  nu_0 <- 4 # given in the question
+  
+  # Gibbs sampler procedure (reference: module 8 lecture notes)
+  THETA <- SIGMA <- NULL
+  set.seed(123) # for reproducibility
+  for (iter in 1:iterations) {
+    if (iter==1) {Sigma <- S_0}
+    
+    ### update theta
+    # get the posterior parameters for the MVN distribution for theta
+    lambda_n <- solve(solve(lambda_0) + n * solve(Sigma)) # 'solve' takes the inverse of matrices 
+    mu_n <- lambda_n %*% (solve(lambda_0) %*% mu_0 + n * solve(Sigma) %*% ybar)
+    # sample theta (just one value) from this updated MVN distribution
+    theta <- mvrnorm(1, mu_n, lambda_n)
+    
+    ### update Sigma
+    # get the posterior parameters for the inversWishart distribution for Sigma
+    S_theta <- (t(crab) - theta) %*% t(t(crab) - theta) # slide 38
+    S_n <- S_0 + S_theta
+    Sigma <- solve(rWishart(1, nu_0+n, solve(S_n))[,,1]) # slide 39
+    
+    ### save results from this iteration
+    THETA <- rbind(THETA, theta)
+    SIGMA <- rbind(SIGMA, c(Sigma))
+    
+  }
+  return(list(THETA, SIGMA))
+  # end of function
+}
+
+niter <- 10000
+bluecrab_posterior <- gibbs(bluecrab, niter)
+orangecrab_posterior <- gibbs(orangecrab, niter)
+
+```
+
+
+(b)
+
+
+```{r plot theta, echo=F, include=T}
+library(ggplot2)
+# V1 = depth, V2 = width
+plot_theta <- ggplot() +
+  geom_point(data=as.data.frame(bluecrab_posterior[[1]]),
+             aes(x=V1, y=V2), 
+             alpha=0.2, color='blue', fill=NA) +
+  geom_point(data=as.data.frame(orangecrab_posterior[[1]]),
+             aes(x=V1, y=V2), 
+             alpha=0.2, color='orange', fill=NA) + 
+  scale_x_continuous(name='depth') +
+  scale_y_continuous(name='width') +
+  ggtitle(label='Width against Depth for Blue crab and Orange crab') +
+  theme_minimal() +
+  NULL
+
+plot_theta
+
+```
+- Orange crabs on average have greater depths and widths than blue crabs.
+
+- For both blue crabs (plotted in blue) and orange crabs (plotted in orange), the posterior samplers of their width and depth suggest that those two measures are strongly positively correlated in each group.
+
+- Said linear relations for blue and orange crabs seem to be the same--seemingly parallel slopes. 
+
+
+
+(c)
+
+
+```{r plot rho, include=T, echo=F}
+# covariance to correlation
+# rho = cov/sqrt(var x var)
+# use the cov2cor function 
+rho_blue <- rho_orange <- matrix(NA, nrow=niter)
+for (iter in 1:niter) {
+  rho_blue[iter] <- cov2cor(matrix(bluecrab_posterior[[2]][iter,], nrow=2))[1,2]
+  rho_orange[iter] <- cov2cor(matrix(orangecrab_posterior[[2]][iter,], nrow=2))[1,2]
+}
+
+rho_df <- data.frame(
+  crab=c(rep('blue', niter), rep('orange', niter)),
+  rho=c(rho_blue, rho_orange))
+
+# plot posterior densities for both rhos
+ggplot(rho_df) +
+  geom_density(aes(x=rho, 
+                   y=(..count..)/sum(..count..),
+                   fill=crab),
+               alpha=0.5) +
+  scale_x_continuous(limits = c(0.9,1)) +
+  scale_y_continuous(name='proportion') +
+  scale_fill_manual(values = c(blue='blue', orange='orange')) +
+  ggtitle(label='Density plot of posterior width-depth correlation') +
+  theme_minimal() +
+  NULL
+
+# to estimate p, randomly draw from each posterior distribution and compare
+# this shall break the pairing of samplers in the same iteration
+set.seed(123)
+p <- mean(
+  sample(rho_blue,100000,replace=T) < sample(rho_orange,100000,replace=T)
+  )
+p
+
+```
+
+- The density plots suggest that we have more precise estimates for orange crabs' width-depth correlation than blue crabs', as indicated by the narrower peak. 
+
+- The correlation is also higher for orange crabs than blue crabs on average.
+
+- The estimated P(blue < orange | data) is 0.9898, which is very strong evidence that orange crabs have higher width-depth correlation than blue crabs.
+
 
 2. (Imputation, 50 points, 10 points each) Hoff 7.4 (Marriage data), **This is left as an optional exercise that will not be graded.**
